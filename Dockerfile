@@ -14,8 +14,6 @@ FROM base as dev
 ENV NODE_ENV=development
 ENV PATH=/app/node_modules/.bin:$PATH
 RUN npm install --only=development
-# can i modified the code 
-COPY --chown=node:node . .
 CMD ["nodemon", "index.js", "--inspect=0.0.0.0:9229"]
 
 FROM base as source

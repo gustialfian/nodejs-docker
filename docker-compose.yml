@@ -3,7 +3,7 @@ version: '2.4'
 services:
   node:
     build:
-      dockerfile: 5.Dockerfile
+      dockerfile: Dockerfile
       context: .
       target: dev
     volumes:
@@ -13,9 +13,31 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   db:
     image: postgres:11.5
     healthcheck:
       test: pg_isready -U postgres -h 127.0.0.1
+      timeout: 5s
       interval: 5s
+      retries: 3
+
+  redis:
+    image: redis:5.0-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  
+  rabbitmq:
+    image: rabbitmq:3.8.0-alpine
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"] 
+      timeout: 5s
+      interval: 5s
+      retries: 3
